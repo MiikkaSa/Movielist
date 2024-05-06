@@ -11,12 +11,45 @@ import Watchlist from "./components/WatchList";
 import MoviesWatched from "./components/MoviesWatched";
 import { Ionicons } from '@expo/vector-icons';
 import SearchMovies from './components/SearchMovies';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-
+const db = SQLite.openDatabase('coursedb.db');
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  useEffect(() => {
+    db.transaction(tx => {
+        tx.executeSql(
+            `CREATE TABLE IF NOT EXISTS watchlist (
+                id INTEGER PRIMARY KEY NOT NULL,
+                title TEXT,
+                year INTEGER
+            )`,
+            [],
+            () => {
+                console.log("Table 'watchlist' created successfully.");
+            },
+            (_, error) => {
+                console.error("Error when creating 'watchlist' table: ", error);
+            }
+        );
+
+        tx.executeSql(
+            `CREATE TABLE IF NOT EXISTS movies_watched (
+                id INTEGER PRIMARY KEY NOT NULL,
+                title TEXT,
+                year INTEGER
+            )`,
+            [],
+            () => {
+                console.log("Table 'movies_watched' created successfully.");
+            },
+            (_, error) => {
+                console.error("Error when creating 'movies_watched' table: ", error);
+            }
+        );
+    });
+}, []);
   return (
     <>
    <NavigationContainer>
@@ -26,19 +59,23 @@ export default function App() {
             let iconName;
 
             if (route.name === 'Watchlist') {
-              iconName = focused ? 'home' : 'home-outline';
+              iconName = focused ? 'movie-open-play' : 'movie-open-play-outline';
+              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
             } else if (route.name === 'Watched movies') {
-              iconName = focused ? 'settings' : 'settings-outline';
-            }
-            else if (route.name === 'Search movies') {
-              iconName = focused ? '' : '';
+              iconName = focused ? 'movie-check' : 'movie-check-outline';
+              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+            } else if (route.name === 'Search movies') {
+              iconName = focused ? 'movie-search' : 'movie-search-outline';
+              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
+        })}
+        tabBarOptions={{
           tabBarActiveTintColor: 'blue',
           tabBarInactiveTintColor: 'gray',
-        })}
+        }}
       >
        <Tab.Screen name="Search movies" component={SearchMovies} />  
        <Tab.Screen name="Watchlist" component={Watchlist} />
@@ -56,13 +93,13 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 40,
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
   },
   listcontainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#000000',
     alignItems: 'center'
   },
 });
