@@ -1,0 +1,1 @@
+A movie wathchlist app in which you can search different movies and add them to your watchlist. You can also keep track on which movies you have watched in the watched movies page. The application is made with React Native fully. It has SQLite database.
